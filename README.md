@@ -1,4 +1,12 @@
 # 590PR Final_Project
+
+**Team Members**
+
+Neha Tanej
+Nicholas Wolf
+
+---------------
+
 Fork from here to create your final project repository.
 
 Two things are very different than all the previous assignments in 590PR regarding the permissions settings:
