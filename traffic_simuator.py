@@ -25,7 +25,7 @@ class GeoLocation(object):
         return self.longitude
 
     def __str__(self) -> str:
-        return "({}, {})".format(self.latitude(), self.longitude())
+        return "({}, {})".format(self.latitude, self.longitude)
 
 
 class CityLocationType(Enum):
@@ -64,7 +64,7 @@ class CityLocation(object):
         return self.location_type == CityLocationType.blockage
 
     def __str__(self) -> str:
-        return "{}({}, {}".format(self.location_type, self.location.latitude(), self.location.longitude())
+        return "{}, {}".format(self.location_type, self.location.__str__())
 
 
 class City:
@@ -192,7 +192,8 @@ class City:
             if len(self.grid_map) * len(self.grid_map[0]) <= 100:
                 nx.draw_networkx_labels(self.city_graph, pos, labels, font_size=5, alpha=0.8)
 
-
+            nx.write_gexf(self.city_graph, "city-gephi.gexf", encoding="utf-8")
             plt.axis('off')
             plt.savefig("city.png")  # save as png
             plt.show()
+
