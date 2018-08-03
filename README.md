@@ -2,7 +2,7 @@
 
 ## Team Member(s):
 
-Neha Tanej
+Neha Taneja
 
 Nicholas Wolf
 
