@@ -67,6 +67,9 @@ B = Businesses
 
 An image (.png) of the network graph will also be generated, along with a Gephi file (.gefx) to assist users with a richer view of the grid being modeled.
 
+Example:
+
+![Sample Network Graph](https://github.com/nmwolf/Final_Project/blob/master/imgs/network-image-example.png)
 
 ## Program structure
 
