@@ -159,29 +159,40 @@ class City:
     def get_random(cls, probability: float, range: int) -> bool:
         return random.randrange(0, range) <= probability
 
-    def print(self, as_graph: bool = False, as_grid: bool = True, top_node=None):
+    def print(self, as_graph: bool = False, as_grid: bool = True, top_node_list: list = None):
 
         if as_grid and len(self.grid_map) <= 50:
+            top_node_set = None
+            if top_node_list:
+                top_node_set = set(map(lambda loc: (loc.location.latitude, loc.location.longitude), top_node_list))
             city = ""
             for row in self.grid_map:
                 city_lane = "| "
                 for location in row:
-                    if location.is_walkway():
-                        city_lane = city_lane + "     | "
-                    if location.is_blocked():
+                    if top_node_set and (location.location.latitude, location.location.longitude) in top_node_set:
                         city_lane = city_lane + "*    | "
-                    if location.is_business():
+                    elif location.is_walkway():
+                        city_lane = city_lane + "     | "
+                    elif location.is_blocked():
+                        city_lane = city_lane + "+    | "
+                    elif location.is_business():
                         city_lane = city_lane + "B    | "
-                    if location.is_residence():
+                    elif location.is_residence():
                         city_lane = city_lane + "R    | "
+                    elif top_node_set and (location.location.latitude, location.location.longitude) in top_node_set:
+                        city_lane = city_lane[0:2] + "*" + city_lane[3:]
+                    else:
+                        city_lane = city_lane + "     | "
                 city = city + city_lane + "\n"
 
             print(city)
             print("Legend")
             print("R - Residence")
             print("B - Business")
-            print("* - Blockage")
+            print("+ - Blockage")
             print("  - Walkway")
+            if top_node_list:
+                print("* - Location with most foot traffic")
 
         if as_graph:
 
@@ -211,8 +222,8 @@ class City:
             nx.draw_networkx_nodes(self.city_graph, pos, nodelist=blocked_locations, node_color="red", node_size=200,
                                    node_shape="+", alpha=0.8)
 
-            if top_node:
-                nx.draw_networkx_nodes(self.city_graph, pos, nodelist=[top_node], node_color="green", node_size=300,
+            if top_node_list:
+                nx.draw_networkx_nodes(self.city_graph, pos, nodelist=top_node_list, node_color="green", node_size=300,
                                        node_shape="*", alpha=1)
 
             nx.draw_networkx_edges(self.city_graph, pos, width=0.1, alpha=0.2)
@@ -222,20 +233,15 @@ class City:
 
             nx.write_gexf(self.city_graph, "city-gephi.gexf", encoding="utf-8")
 
-            if top_node:
-                plt.title(
-                    "City Graph - Total City Blocks({}), Residences({}), Businesses({}), Blockages({}), Walkways({"
-                    "})\nTop location{})".format(len(self.grid_map) * len(self.grid_map[0]), len(residence_locations),
-                                                  len(business_locations), len(blocked_locations),
-                                                  len(walkway_locations), top_node.location), fontsize="9")
-            else:
-                plt.title(
-                    "City Graph - Total City Blocks({}), Residences({}), Businesses({}), Blockages({}), Walkways({"
-                    "})".format(len(self.grid_map) * len(self.grid_map[0]), len(residence_locations),
-                                len(business_locations), len(blocked_locations), len(walkway_locations)), fontsize="9")
+            plt.title("City Graph - Total City Blocks({}), Residences({}), Businesses({}), Blockages({}), Walkways({"
+                      "})".format(len(self.grid_map) * len(self.grid_map[0]), len(residence_locations),
+                                  len(business_locations), len(blocked_locations), len(walkway_locations)),
+                      fontsize="9")
+
             labels = ["walkway", "residence", "business", "blockage"]
-            if top_node:
-                labels.append("top_location")
+
+            if top_node_list:
+                labels.append("top_locations")
 
             legend = plt.legend(shadow=True, labels=labels, loc="lower left")
 
@@ -246,7 +252,7 @@ class City:
                 label.set_linewidth(5)
 
             plt.axis('off')
-            if top_node:
+            if top_node_list:
                 plt.savefig("city-with-top-location.png")
             else:
                 plt.savefig("city.png")  # save as png

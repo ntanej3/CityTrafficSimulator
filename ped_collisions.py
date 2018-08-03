@@ -112,30 +112,38 @@ def print_outtable(simulation_summary, grid_size, city):
     table = BeautifulTable()
     table.column_headers = ["City Grid Size", "Number of Simulations", "Number of Pedestrians", "Top Location Node",
                             "Highest Number of Pedestrian Collisions for Node"]
+    top_location_for_all_simulations = []
 
-    max_collisions = 0
-    top_place = None
+    highest_collisions_of_all_simulations = 0
+    top_place_of_all_simulations = None
 
     for simulation_number in simulation_summary:
+        top_place_for_current_simulation = None
+        highest_collisions_for_current_simulation = 0
         pedestrian_report = simulation_summary[simulation_number]
         for pedestrian_count in pedestrian_report:
             collisions = pedestrian_report[pedestrian_count]["Number_Collisions"]
-            if collisions >= max_collisions:
-                top_place = pedestrian_report[pedestrian_count]["Top_Location"]
-                max_collisions = collisions
+            if collisions >= highest_collisions_for_current_simulation:
+                top_place_for_current_simulation = pedestrian_report[pedestrian_count]["Top_Location"]
+                highest_collisions_for_current_simulation = collisions
             table.append_row(
                 [str(grid_size), str(simulation_number), str(pedestrian_report[pedestrian_count]["Pedestrians"]),
                  str(pedestrian_report[pedestrian_count]["Top_Location"]),
                  str(pedestrian_report[pedestrian_count]["Number_Collisions"])])
 
+        if highest_collisions_for_current_simulation >= highest_collisions_of_all_simulations:
+            highest_collisions_of_all_simulations = highest_collisions_for_current_simulation
+            top_place_of_all_simulations = top_place_for_current_simulation
+
+        top_location_for_all_simulations.append(top_place_for_current_simulation)
+
     print(table)
 
-    print(
-        "\nThe top location for pedestrian traffic is located at the node located at {} with {} collisions (Also "
-        "saved as city-with-top-location.png).\n".format(
-            top_place, max_collisions))
+    print("\nThe top location of all simulations for pedestrian traffic is located at the node located at {} with {} "
+          "collisions (Also saved as city-with-top-location.png).\n".format(top_place_of_all_simulations,
+                                                                            highest_collisions_of_all_simulations))
 
-    city.print(True, False, top_place)
+    city.print(True, True, top_location_for_all_simulations)
 
 
 def main():
