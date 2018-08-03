@@ -225,7 +225,7 @@ class City:
             if top_node:
                 plt.title(
                     "City Graph - Total City Blocks({}), Residences({}), Businesses({}), Blockages({}), Walkways({"
-                    "}\nTop location({}))".format(len(self.grid_map) * len(self.grid_map[0]), len(residence_locations),
+                    "})\nTop location{})".format(len(self.grid_map) * len(self.grid_map[0]), len(residence_locations),
                                                   len(business_locations), len(blocked_locations),
                                                   len(walkway_locations), top_node.location), fontsize="9")
             else:
