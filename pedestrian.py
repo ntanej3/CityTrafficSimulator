@@ -48,6 +48,8 @@ class Pedestrian(object):
     @classmethod
     def generate_random_pedestrians(cls, num_peds, city: City) -> List:
 
+        print("Generating {} random pedestrians".format(num_peds))
+
         """
         For pedestrian start origins, we randomly select, without replacement, n number of residences or walkways 
         from city grid, one for each pedestrian

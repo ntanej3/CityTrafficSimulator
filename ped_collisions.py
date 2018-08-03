@@ -116,7 +116,6 @@ def print_outtable(simulation_summary, grid_size, city):
     max_collisions = 0
     top_place = None
 
-    print(simulation_summary)
     for simulation_number in simulation_summary:
         pedestrian_report = simulation_summary[simulation_number]
         for pedestrian_count in pedestrian_report:
@@ -160,8 +159,6 @@ def main():
 
         pedestrian_summary = {}
         for num_peds in range(min_num_peds, max_num_peds + 1):
-
-            print("Number of pedestrians is {}".format(num_peds))
 
             intersection_list = run_simulation(city, num_peds)
 

@@ -124,7 +124,7 @@ class City:
     @classmethod
     def generate_random_city(cls, rows: int, columns: int):
 
-        print("Generating random city")
+        print("Generating a random city")
 
         city_grid = []
         for row in range(0, rows):
@@ -161,7 +161,7 @@ class City:
 
     def print(self, as_graph: bool = False, as_grid: bool = True, top_node=None):
 
-        if as_grid:
+        if as_grid and len(self.grid_map) <= 50:
             city = ""
             for row in self.grid_map:
                 city_lane = "| "
