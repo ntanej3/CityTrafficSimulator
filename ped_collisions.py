@@ -12,38 +12,41 @@ from traffic_simuator import City, CityLocation
 from pedestrian import Pedestrian
 import random
 import networkx as nx
+from beautifultable import BeautifulTable
 
-def query_number_pedestrians():
+def query_number_pedestrians(grid_size):
     """
     Function to query user for number of pedestrians to use for the simulation
-    :return: integer whole number greater than 0
+    :return: integer greater than 0
     """
     while True:
         num_peds = input("How many pedestrians for this simulation?")
         try:
             int(num_peds)
-            if int(num_peds) >=1:
+            if int(num_peds) >=1 and int(num_peds) <= grid_size/2:
                 return(int(num_peds))
                 break
             else:
-                print("Invalid response. Select a number greater than 0")
+                print("Invalid response. You have either select a number less than 1 or have an insufficient grid size\n \
+                for this number of pedestrians. The number of pedestrians cannot exceed the number of residences \n \
+                to serve as starting positions (common in small grids).")
         except:
             print("Invalid response. Try again.")
 
 def query_size_grid():
     """
     Function to query user for size of city grid to use for the simulation
-    :return: integer whole number greater than 0 and less than/equal to 10
+    :return: integer greater than 0 and less than/equal to 40
     """
     while True:
-        size_grid = input("What size city grid to use for the simulation (select a number between 1 and 10):")
+        size_grid = input("What size city grid to use for the simulation (select a number between 10 and 40):")
         try:
             int(size_grid)
-            if int(size_grid) >= 1 and int(size_grid)<= 10:
+            if int(size_grid) >= 10 and int(size_grid)<= 40:
                 return(int(size_grid))
                 break
             else:
-                print("Invalid response. Select a number between 1 and 10")
+                print("Invalid response. Select a number between 10 and 40")
         except:
             print("Invalid response. Try again.")
 
@@ -51,7 +54,7 @@ def query_size_grid():
 def query_number_simulations():
     """
     Function to query user for number of simulations to run
-    :return: integer whole number greater than 0
+    :return: integer greater than 0
     """
     while True:
         size_grid = input("How many simulations to run?")
@@ -66,11 +69,15 @@ def query_number_simulations():
             print("Invalid response. Try again.")
 
 
-def collision_count(count_dict, node_object):
+def intersect_count(count_dict, node_object, node_position):
     try:
-        count_dict[node_object] += 1
+        count_dict[node_object]["total_count"] += 1
     except KeyError:
-        count_dict[node_object]  = 1
+        count_dict[node_object]  = {"total_count":1, "position_collisions":{}}
+    try:
+        count_dict[node_object]["position_collisions"][node_position] += 1
+    except KeyError:
+        count_dict[node_object]["position_collisions"][node_position] = 1
     return count_dict
 
 
@@ -82,7 +89,11 @@ def run_simulation(city, num_peds):
 
     res_nodes = [i for i in city.city_graph.nodes() if CityLocation.is_residence(i) == True]
 
-    start_nodes = random.sample(res_nodes, num_peds)
+    try:
+        start_nodes = random.sample(res_nodes, num_peds)
+    except ValueError:
+        print("Sorry, the city grid size is not sufficiently large for this number of pedestrians.")
+        return None
 
     """
     For destinations, we randomly select, without replacement, n number of businesses from city grid,
@@ -107,7 +118,7 @@ def run_simulation(city, num_peds):
     city_unblocked.remove_nodes_from(blocked_nodes)
 
     """
-    We now build all of our pedestrians, assigning each one of the random pairs of start/end points
+    We now initiate all of our pedestrians, assigning each one of the random pairs of start/end points
     and using that to construct a generator of all shortest paths for each pedestrian
     
     """
@@ -119,35 +130,43 @@ def run_simulation(city, num_peds):
         ped_num += 1
 
     """
-    Finally, we count all collisions (i.e. common nodes) between pedestrians that occur for all shortest paths
-    between start and destinations available to pedestrians. The resulting dictionary contains nodes and the count
-    of collisions that occur.
-    
+    Finally, we create a count of how many times a node (CityLocation object) appears in 
+    the shortest simple paths of pedestrians, indicating a "hot spot" in the grid. We also
+    examine the number of times that a node is occupied by a pedestrian
+    on a path at the "same time," i.e. in the same index position in a pathway, as another
+    node. This indicates frequent "collisions" of pedestrians at the same place at same time.
+    We exclude start and destination nodes from this count.
     """
-    count_dict = {}
+
+    intersect_dict = {}
 
     for ped in pedestrians:
         for short_path in ped.list_short_paths:
+            node_position = 1
             for short_path_node in short_path[1:-1]:
-                count_dict = collision_count(count_dict, short_path_node)
+                intersect_dict = intersect_count(intersect_dict, short_path_node, node_position)
+                node_position+=1
 
-    return sorted(count_dict.items(), key=lambda x: x[1], reverse=True)
+    return sorted(intersect_dict.items(), key=lambda x: x[1]["total_count"], reverse=True)
 
 
 def print_outtable(results_dict, grid_size):
     """
-    A helper function to pretty print a table of results (needs work)
+    A helper function to pretty print a table of results
     :param results_dict:
     :param grid_size:
-    :return:
+    :return: None (prints ASCII table)
     """
-    table = "| Iteration Number | Grid Size | Number Pedestrians | Top Location | Number of Collisions |\n"
+    table = BeautifulTable()
+    table.column_headers = ["Simulation Number", "City Grid Size", "Number Pedestrians",
+                           "Top Location Node", "Number of Times Node in a Pedestrian Path",
+                            "Highest Number of Pedestrian Collisions for Node"]
     for result in results_dict:
-        row = "|\t\t" + str(result) + " | " + str(grid_size) \
-              + " |\t\t" + str(results_dict[result]["Pedestrians"]) \
-              + " |\t\t" + str(results_dict[result]["Top_Location"]) \
-              + " |\t\t" + str(results_dict[result]["Number_Collisions"]) + " |\n"
-        table+=row
+        table.append_row([str(result), str(grid_size),
+                         str(results_dict[result]["Pedestrians"]),
+                         str(results_dict[result]["Top_Location"]),
+                         str(results_dict[result]["Number_Intersections"]),
+                         str(results_dict[result]["Number_Collisions"])])
     print(table)
 
 
@@ -159,21 +178,36 @@ def main():
 
     size = query_size_grid()                        # Query user for size of city grid
 
-    num_peds = query_number_pedestrians()           # Query user for number of pedestrians
+    num_peds = query_number_pedestrians(size)       # Query user for number of pedestrians
 
     city = City.generate_random_city(size, size)    # Build the city network
 
-    city.print(False, True)                         # Display city network
+    print("Here is the generated city grid that will be tested:")
+
+    city.print(True, True)                         # Display city network
 
     while num_simuls > 0:                           # Run simulations and record results
         results_list = run_simulation(city, num_peds)
-        simulation_summary[num_simuls] = {"Pedestrians":num_peds,
-                                          "City":city,
-                                          "Top_Location":results_list[0][0],
-                                          "Number_Collisions":results_list[0][1]}
+        if results_list:
+            top_collision_count_list = sorted(results_list[0][1]["position_collisions"].items(),
+                                                            key=lambda x: x[1], reverse=True)
+            top_collision_count = top_collision_count_list[0][1]
+            simulation_summary[num_simuls] = {"Pedestrians":num_peds,
+                                              "City":city,
+                                              "Top_Location":results_list[0][0],
+                                              "Number_Intersections":results_list[0][1]["total_count"],
+                                              "Number_Collisions":top_collision_count}
+        else:
+            break
         num_simuls-=1
 
+
+
     print_outtable(simulation_summary, size)
+    top_place = sorted(simulation_summary.items(), key=lambda x: x[1]["Number_Intersections"],
+                                                                         reverse=True)[0]
+    print("The top location for pedestrian traffic is located at the node located \n \
+     at lat-long {}".format(top_place[1]["Top_Location"].location))
 
 
 
