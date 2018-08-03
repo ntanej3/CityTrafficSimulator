@@ -29,7 +29,11 @@ The idea behind these parameters, as with any Monte Carlo simulation, is to cons
 
 ## Hypothesis or hypotheses before running the simulation:
 
+One expectation that we would have for the simulation is that walkways, rather than businesses or residences, would be the nodetype with the most traffic.
+
+
 ## Analytical Summary of your findings: (e.g. Did you adjust the scenario based on previous simulation outcomes?  What are the management decisions one could make from your simulation's output, etc.)
+
 
 ## Instructions on how to use the program:
 
@@ -57,11 +61,12 @@ R = Residences
 
 B = Businesses
 
-* = Blockage
+`*` = Blockage
 
 | | = Walkway
 
 An image (.png) of the network graph will also be generated, along with a Gephi file (.gefx) to assist users with a richer view of the grid being modeled.
+
 
 ## Program structure
 
@@ -70,6 +75,7 @@ The simulation relies on several Python classes. The `City` object is a `network
 The `Pedestrian` object has a start (`Pedestrian.start_location`), an end (`Pedestrian.end_location`), and a list of shortest simple paths (`networkx` simple paths) between those destinations (`Pedestrian.list_short_paths`).
 
 When the simulation is run, it first builds the `City` object, then a set of `Pedestrian` objects. Lastly, it investigates the relationship of each pedestrian's paths to each others given the contours of the city.
+
 
 ## Program Results
 
@@ -85,6 +91,7 @@ Each row represents one simuluation of *n* pedestrians (in this case, 4), on a c
 The program looks at which locations (nodes, i.e. `CityLocation`) occurred most often in shortest pathways (the column "Number of Times Node in a Pedestrian Path")
 
 It also looks at nodes that occurred frequently in the same order location of many paths, i.e. occurred frequently in the first, second, third, fourth, etc. "step" of many pedestrians' pathways. This indicates literal collision -- many pedestrians are hitting that same location at the same stage in his or her journey, a further indication of a "hotspot." This number is recorded in the final column.
+
 
 ## All Sources Used:
 
