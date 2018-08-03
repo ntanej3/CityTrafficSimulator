@@ -1,9 +1,9 @@
-import networkx as nx
-from typing import Dict
-from typing import List
-from enum import Enum
 import random
+from enum import Enum
+from typing import List
+
 import matplotlib.pyplot as plt
+import networkx as nx
 
 
 class GeoLocation(object):
@@ -27,6 +27,18 @@ class GeoLocation(object):
     def __str__(self) -> str:
         return "({}, {})".format(self.latitude, self.longitude)
 
+    def __repr__(self):
+        return self.__str__()
+
+    def __eq__(self, o: object) -> bool:
+        if isinstance(o, self.__class__):
+            return self.latitude == o.latitude and self.longitude == o.longitude
+        else:
+            return False
+
+    def __hash__(self) -> int:
+        return 71 * hash(self.latitude) * hash(self.longitude)
+
 
 class CityLocationType(Enum):
     residence = 1
@@ -37,19 +49,15 @@ class CityLocationType(Enum):
 
 class CityLocation(object):
 
-    def __init__(self, location: GeoLocation, location_type: CityLocationType, location_description: str = ""):
+    def __init__(self, location: GeoLocation, location_type: CityLocationType):
         self.location = location
         self.location_type = location_type
-        self.location_description = location_description
 
     def location(self) -> GeoLocation:
         return self.location
 
     def location_type(self) -> CityLocationType:
         return self.location_type
-
-    def location_description(self) -> str:
-        return self.location_description
 
     def is_residence(self) -> bool:
         return self.location_type == CityLocationType.residence
@@ -65,6 +73,18 @@ class CityLocation(object):
 
     def __str__(self) -> str:
         return "{}, {}".format(self.location_type, self.location.__str__())
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __eq__(self, o: object) -> bool:
+        if isinstance(o, self.__class__):
+            return self.location == o.location and self.location_type == o.location_type
+        else:
+            return False
+
+    def __hash__(self) -> int:
+        return 29 * hash(self.location.__hash__) * hash(self.location_type.__hash__)
 
 
 class City:
@@ -145,16 +165,21 @@ class City:
                 city_lane = "| "
                 for location in row:
                     if location.is_walkway():
-                        city_lane = city_lane + "  | "
+                        city_lane = city_lane + "     | "
                     if location.is_blocked():
-                        city_lane = city_lane + "* | "
+                        city_lane = city_lane + "*    | "
                     if location.is_business():
-                        city_lane = city_lane + "B | "
+                        city_lane = city_lane + "B    | "
                     if location.is_residence():
-                        city_lane = city_lane + "R | "
+                        city_lane = city_lane + "R    | "
                 city = city + city_lane + "\n"
 
             print(city)
+            print("Legend")
+            print("R - Residence")
+            print("B - Business")
+            print("* - Blockage")
+            print("  - Walkway")
 
         if as_graph:
 
@@ -175,7 +200,7 @@ class City:
                 if location.is_blocked():
                     blocked_locations.append(location)
 
-            nx.draw_networkx_nodes(self.city_graph, pos, nodelist=walkway_locations, node_color="green", node_size=20,
+            nx.draw_networkx_nodes(self.city_graph, pos, nodelist=walkway_locations, node_color="black", node_size=20,
                                    node_shape="x", alpha=0.8)
             nx.draw_networkx_nodes(self.city_graph, pos, nodelist=residence_locations, node_color="yellow",
                                    node_size=250, node_shape="s", alpha=0.8)
@@ -184,16 +209,26 @@ class City:
             nx.draw_networkx_nodes(self.city_graph, pos, nodelist=blocked_locations, node_color="red", node_size=200,
                                    node_shape="*", alpha=0.8)
 
-            nx.draw_networkx_edges(self.city_graph, pos, width=0.2, alpha=0.4)
+            nx.draw_networkx_edges(self.city_graph, pos, width=0.1, alpha=0.2)
 
-            labels = dict([(loc, "({}, {})".format(loc.location.latitude, loc.location.longitude)) for loc in
-                           self.city_graph.nodes()])
-
-            if len(self.grid_map) * len(self.grid_map[0]) <= 100:
-                nx.draw_networkx_labels(self.city_graph, pos, labels, font_size=5, alpha=0.8)
+            labels = dict([(loc, loc.location_type.name) for loc in self.city_graph.nodes()])
+            # nx.draw_networkx_labels(self.city_graph, pos, labels, font_size=5, alpha=0.8)
 
             nx.write_gexf(self.city_graph, "city-gephi.gexf", encoding="utf-8")
+
+            plt.title("City Graph - Total City Blocks({}), Residences({}), Businesses({}), Blockages({}), Walkways({"
+                      "})".format(len(self.grid_map) * len(self.grid_map[0]), len(residence_locations),
+                                  len(business_locations), len(blocked_locations), len(walkway_locations)),
+                      fontsize="9")
+
+            legend = plt.legend(shadow=True, labels=["walkway", "residence", "business", "blockage"], loc="lower left")
+
+            for label in legend.get_texts():
+                label.set_fontsize('small')
+
+            for label in legend.get_lines():
+                label.set_linewidth(0.2)
+
             plt.axis('off')
             plt.savefig("city.png")  # save as png
             plt.show()
-
