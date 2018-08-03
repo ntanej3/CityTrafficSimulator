@@ -124,6 +124,8 @@ class City:
     @classmethod
     def generate_random_city(cls, rows: int, columns: int):
 
+        print("Generating random city")
+
         city_grid = []
         for row in range(0, rows):
             row_list = []
@@ -231,4 +233,4 @@ class City:
 
             plt.axis('off')
             plt.savefig("city.png")  # save as png
-            plt.show()
+            plt.show(block=False)
