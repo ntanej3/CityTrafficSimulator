@@ -50,21 +50,21 @@ Because each pedestrian needs a start residence, and because the proportion of r
 
 Once run, the program will output a basic ASCII rendition of the city grid generated, like this:
 
-|   |   | R |   | B |   |   | B |   |   |
-|   |   |   | B | B |   |   | B |   | B |
-| R |   |   | R | B |   | R |   |   |   |
-|   |   |   |   | B |   |   |   |   |   |
-|   | * |   |   |   |   |   |   | R |   |
-|   |   | R |   |   |   |   | * |   |   |
-|   |   | R |   |   |   |   |   |   |   |
-|   |   |   | * |   |   |   |   |   |   |
-|   |   |   | B | B |   |   |   |   |   |
-|   | R |   | R |   |   |   |   | R |   |
+|   |   | R |   | B |   |   | B |   |   |<br/>
+|   |   |   | B | B |   |   | B |   | B |<br/>
+| R |   |   | R | B |   | R |   |   |   |<br/>
+|   |   |   |   | B |   |   |   |   |   |<br/>
+|   | * |   |   |   |   |   |   | R |   |<br/>
+|   |   | R |   |   |   |   | * |   |   |<br/>
+|   |   | R |   |   |   |   |   |   |   |<br/>
+|   |   |   | * |   |   |   |   |   |   |<br/>
+|   |   |   | B | B |   |   |   |   |   |<br/>
+|   | R |   | R |   |   |   |   | R |   |<br/>
 
-R = Residences
-B = Businesses
-* = Blockage
-| | = Walkway
+R = Residences<br/>
+B = Businesses<br/>
+* = Blockage<br/>
+| | = Walkway<br/>
 
 An image (.png) of the network graph will also be generated, along with a Gephi file (.gefx) to assist users with a richer view of the grid being modeled.
 
@@ -80,54 +80,53 @@ When the simulation is run, it first builds the `City` object, then a set of `Pe
 
 When run, the program will generate for the user a table summarizing each simulation like this example:
 
-+--------+------+--------+--------------+-----------------+--------------------+
-| Simula | City | Number | Top Location | Number of Times | Highest Number of  |
-| tion N |  Gri |  Pedes |     Node     |  Node in a Pede | Pedestrian Collisi |
-| umber  | d Si | trians |              |   strian Path   |    ons for Node    |
-|        |  ze  |        |              |                 |                    |
-+--------+------+--------+--------------+-----------------+--------------------+
-|   1    |  10  |   4    | CityLocation |        4        |         4          |
-|        |      |        | Type.walkway |                 |                    |
-|        |      |        |   , (3, 3)   |                 |                    |
-+--------+------+--------+--------------+-----------------+--------------------+
-|   2    |  10  |   4    | CityLocation |       626       |        596         |
-|        |      |        | Type.residen |                 |                    |
-|        |      |        |  ce, (2, 3)  |                 |                    |
-+--------+------+--------+--------------+-----------------+--------------------+
-|   3    |  10  |   4    | CityLocation |       66        |         60         |
-|        |      |        | Type.residen |                 |                    |
-|        |      |        |  ce, (6, 2)  |                 |                    |
-+--------+------+--------+--------------+-----------------+--------------------+
-|   4    |  10  |   4    | CityLocation |       19        |         15         |
-|        |      |        | Type.walkway |                 |                    |
-|        |      |        |   , (5, 8)   |                 |                    |
-+--------+------+--------+--------------+-----------------+--------------------+
-|   5    |  10  |   4    | CityLocation |       36        |         35         |
-|        |      |        | Type.walkway |                 |                    |
-|        |      |        |   , (4, 7)   |                 |                    |
-+--------+------+--------+--------------+-----------------+--------------------+
-|   6    |  10  |   4    | CityLocation |       984       |        984         |
-|        |      |        | Type.busines |                 |                    |
-|        |      |        |  s, (8, 4)   |                 |                    |
-+--------+------+--------+--------------+-----------------+--------------------+
-|   7    |  10  |   4    | CityLocation |       984       |        984         |
-|        |      |        | Type.residen |                 |                    |
-|        |      |        |  ce, (6, 2)  |                 |                    |
-+--------+------+--------+--------------+-----------------+--------------------+
-|   8    |  10  |   4    | CityLocation |       89        |         84         |
-|        |      |        | Type.residen |                 |                    |
-|        |      |        |  ce, (6, 2)  |                 |                    |
-+--------+------+--------+--------------+-----------------+--------------------+
-|   9    |  10  |   4    | CityLocation |       84        |         84         |
-|        |      |        | Type.residen |                 |                    |
-|        |      |        |  ce, (6, 2)  |                 |                    |
-+--------+------+--------+--------------+-----------------+--------------------+
-|   10   |  10  |   4    | CityLocation |        2        |         2          |
-|        |      |        | Type.busines |                 |                    |
-|        |      |        |  s, (1, 3)   |                 |                    |
-+--------+------+--------+--------------+-----------------+--------------------+
-The top location for pedstrian traffic is located at the node located
-      at lat-long (8, 4)
++--------+------+--------+--------------+-----------------+--------------------+<br/>
+| Simula | City | Number | Top Location | Number of Times | Highest Number of  |<br/>
+| tion N |  Gri |  Pedes |     Node     |  Node in a Pede | Pedestrian Collisi |<br/>
+| umber  | d Si | trians |              |   strian Path   |    ons for Node    |<br/>
+|        |  ze  |        |              |                 |                    |<br/>
++--------+------+--------+--------------+-----------------+--------------------+<br/>
+|   1    |  10  |   4    | CityLocation |        4        |         4          |<br/>
+|        |      |        | Type.walkway |                 |                    |<br/>
+|        |      |        |   , (3, 3)   |                 |                    |<br/>
++--------+------+--------+--------------+-----------------+--------------------+<br/>
+|   2    |  10  |   4    | CityLocation |       626       |        596         |<br/>
+|        |      |        | Type.residen |                 |                    |<br/>
+|        |      |        |  ce, (2, 3)  |                 |                    |<br/>
++--------+------+--------+--------------+-----------------+--------------------+<br/>
+|   3    |  10  |   4    | CityLocation |       66        |         60         |<br/>
+|        |      |        | Type.residen |                 |                    |<br/>
+|        |      |        |  ce, (6, 2)  |                 |                    |<br/>
++--------+------+--------+--------------+-----------------+--------------------+<br/>
+|   4    |  10  |   4    | CityLocation |       19        |         15         |<br/>
+|        |      |        | Type.walkway |                 |                    |<br/>
+|        |      |        |   , (5, 8)   |                 |                    |<br/>
++--------+------+--------+--------------+-----------------+--------------------+<br/>
+|   5    |  10  |   4    | CityLocation |       36        |         35         |<br/>
+|        |      |        | Type.walkway |                 |                    |<br/>
+|        |      |        |   , (4, 7)   |                 |                    |<br/>
++--------+------+--------+--------------+-----------------+--------------------+<br/>
+|   6    |  10  |   4    | CityLocation |       984       |        984         |<br/>
+|        |      |        | Type.busines |                 |                    |<br/>
+|        |      |        |  s, (8, 4)   |                 |                    |<br/>
++--------+------+--------+--------------+-----------------+--------------------+<br/>
+|   7    |  10  |   4    | CityLocation |       984       |        984         |<br/>
+|        |      |        | Type.residen |                 |                    |<br/>
+|        |      |        |  ce, (6, 2)  |                 |                    |<br/>
++--------+------+--------+--------------+-----------------+--------------------+<br/>
+|   8    |  10  |   4    | CityLocation |       89        |         84         |<br/>
+|        |      |        | Type.residen |                 |                    |<br/>
+|        |      |        |  ce, (6, 2)  |                 |                    |<br/>
++--------+------+--------+--------------+-----------------+--------------------+<br/>
+|   9    |  10  |   4    | CityLocation |       84        |         84         |<br/>
+|        |      |        | Type.residen |                 |                    |<br/>
+|        |      |        |  ce, (6, 2)  |                 |                    |<br/>
++--------+------+--------+--------------+-----------------+--------------------+<br/>
+|   10   |  10  |   4    | CityLocation |        2        |         2          |<br/>
+|        |      |        | Type.busines |                 |                    |<br/>
+|        |      |        |  s, (1, 3)   |                 |                    |<br/>
++--------+------+--------+--------------+-----------------+--------------------+<br/>
+The top location for pedstrian traffic is located at the node located at lat-long (8, 4)
 
 Each row represents one simuluation of *n* pedestrians (in this case, 4), on a city grid of a size *k*, here 10.
 
