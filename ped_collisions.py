@@ -139,11 +139,13 @@ def print_outtable(simulation_summary, grid_size, city):
 
     print(table)
 
-    print("\nThe top location of all simulations for pedestrian traffic is located at the node located at {} with {} "
-          "collisions (Also saved as city-with-top-location.png).\n".format(top_place_of_all_simulations,
-                                                                            highest_collisions_of_all_simulations))
-
+    print("\nLocation with most foot traffic for each simulation are saved to city-with-top-location.png\n")
     city.print(True, True, top_location_for_all_simulations)
+
+    print(
+        "\nThe location with most foot traffic from all the simulations for pedestrian traffic is located at the node "
+        "located at {} with {} collisions (saved as city-with-top-location.png).\n".format(top_place_of_all_simulations,
+                                                                                           highest_collisions_of_all_simulations))
 
 
 def main():
@@ -155,7 +157,7 @@ def main():
 
     city = City.generate_random_city(size, size)  # Build the city network
 
-    print("\nHere is the randomly generated city grid that will be used for simulation (also saved as city.png):\n")
+    print("\nHere is the randomly generated city grid that will be used for simulation (saved as city.png):\n")
 
     city.print(True, True)  # Display city network
 
