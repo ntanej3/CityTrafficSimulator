@@ -36,6 +36,7 @@ The idea behind these parameters, as with any Monte Carlo simulation, is to cons
 This program is reliant on having the following modules installed:
 
 [```networkx```](https://networkx.github.io/documentation/latest/install.html) (>2.0)
+
 [```beautifultable```](https://pypi.org/project/beautifultable/)
 
 Run `ped_collisions.py` within directory to set parameters and run simulation.
@@ -50,21 +51,15 @@ Because each pedestrian needs a start residence, and because the proportion of r
 
 Once run, the program will output a basic ASCII rendition of the city grid generated, like this:
 
-|   |   | R |   | B |   |   | B |   |   |<br/>
-|   |   |   | B | B |   |   | B |   | B |<br/>
-| R |   |   | R | B |   | R |   |   |   |<br/>
-|   |   |   |   | B |   |   |   |   |   |<br/>
-|   | * |   |   |   |   |   |   | R |   |<br/>
-|   |   | R |   |   |   |   | * |   |   |<br/>
-|   |   | R |   |   |   |   |   |   |   |<br/>
-|   |   |   | * |   |   |   |   |   |   |<br/>
-|   |   |   | B | B |   |   |   |   |   |<br/>
-|   | R |   | R |   |   |   |   | R |   |<br/>
+![Sample Table](https://github.com/nmwolf/Final_Project/blob/master/imgs/sample-city-grid.png)
 
-R = Residences<br/>
-B = Businesses<br/>
-* = Blockage<br/>
-| | = Walkway<br/>
+R = Residences
+
+B = Businesses
+
+* = Blockage
+
+| | = Walkway
 
 An image (.png) of the network graph will also be generated, along with a Gephi file (.gefx) to assist users with a richer view of the grid being modeled.
 
@@ -80,52 +75,9 @@ When the simulation is run, it first builds the `City` object, then a set of `Pe
 
 When run, the program will generate for the user a table summarizing each simulation like this example:
 
-+--------+------+--------+--------------+-----------------+--------------------+<br/>
-| Simula | City | Number | Top Location | Number of Times | Highest Number of  |<br/>
-| tion N |  Gri |  Pedes |     Node     |  Node in a Pede | Pedestrian Collisi |<br/>
-| umber  | d Si | trians |              |   strian Path   |    ons for Node    |<br/>
-|        |  ze  |        |              |                 |                    |<br/>
-+--------+------+--------+--------------+-----------------+--------------------+<br/>
-|   1    |  10  |   4    | CityLocation |        4        |         4          |<br/>
-|        |      |        | Type.walkway |                 |                    |<br/>
-|        |      |        |   , (3, 3)   |                 |                    |<br/>
-+--------+------+--------+--------------+-----------------+--------------------+<br/>
-|   2    |  10  |   4    | CityLocation |       626       |        596         |<br/>
-|        |      |        | Type.residen |                 |                    |<br/>
-|        |      |        |  ce, (2, 3)  |                 |                    |<br/>
-+--------+------+--------+--------------+-----------------+--------------------+<br/>
-|   3    |  10  |   4    | CityLocation |       66        |         60         |<br/>
-|        |      |        | Type.residen |                 |                    |<br/>
-|        |      |        |  ce, (6, 2)  |                 |                    |<br/>
-+--------+------+--------+--------------+-----------------+--------------------+<br/>
-|   4    |  10  |   4    | CityLocation |       19        |         15         |<br/>
-|        |      |        | Type.walkway |                 |                    |<br/>
-|        |      |        |   , (5, 8)   |                 |                    |<br/>
-+--------+------+--------+--------------+-----------------+--------------------+<br/>
-|   5    |  10  |   4    | CityLocation |       36        |         35         |<br/>
-|        |      |        | Type.walkway |                 |                    |<br/>
-|        |      |        |   , (4, 7)   |                 |                    |<br/>
-+--------+------+--------+--------------+-----------------+--------------------+<br/>
-|   6    |  10  |   4    | CityLocation |       984       |        984         |<br/>
-|        |      |        | Type.busines |                 |                    |<br/>
-|        |      |        |  s, (8, 4)   |                 |                    |<br/>
-+--------+------+--------+--------------+-----------------+--------------------+<br/>
-|   7    |  10  |   4    | CityLocation |       984       |        984         |<br/>
-|        |      |        | Type.residen |                 |                    |<br/>
-|        |      |        |  ce, (6, 2)  |                 |                    |<br/>
-+--------+------+--------+--------------+-----------------+--------------------+<br/>
-|   8    |  10  |   4    | CityLocation |       89        |         84         |<br/>
-|        |      |        | Type.residen |                 |                    |<br/>
-|        |      |        |  ce, (6, 2)  |                 |                    |<br/>
-+--------+------+--------+--------------+-----------------+--------------------+<br/>
-|   9    |  10  |   4    | CityLocation |       84        |         84         |<br/>
-|        |      |        | Type.residen |                 |                    |<br/>
-|        |      |        |  ce, (6, 2)  |                 |                    |<br/>
-+--------+------+--------+--------------+-----------------+--------------------+<br/>
-|   10   |  10  |   4    | CityLocation |        2        |         2          |<br/>
-|        |      |        | Type.busines |                 |                    |<br/>
-|        |      |        |  s, (1, 3)   |                 |                    |<br/>
-+--------+------+--------+--------------+-----------------+--------------------+<br/>
+![Sample Table](https://github.com/nmwolf/Final_Project/blob/master/imgs/sample-results.png)
+
+
 The top location for pedstrian traffic is located at the node located at lat-long (8, 4)
 
 Each row represents one simuluation of *n* pedestrians (in this case, 4), on a city grid of a size *k*, here 10.
