@@ -159,7 +159,7 @@ class City:
     def get_random(cls, probability: float, range: int) -> bool:
         return random.randrange(0, range) <= probability
 
-    def print(self, as_graph: bool = False, as_grid: bool = True):
+    def print(self, as_graph: bool = False, as_grid: bool = True, top_node=None):
 
         if as_grid:
             city = ""
@@ -209,7 +209,11 @@ class City:
             nx.draw_networkx_nodes(self.city_graph, pos, nodelist=business_locations, node_color="blue", node_size=250,
                                    node_shape="o", alpha=0.8)
             nx.draw_networkx_nodes(self.city_graph, pos, nodelist=blocked_locations, node_color="red", node_size=200,
-                                   node_shape="*", alpha=0.8)
+                                   node_shape="+", alpha=0.8)
+
+            if top_node:
+                nx.draw_networkx_nodes(self.city_graph, pos, nodelist=[top_node], node_color="green", node_size=300,
+                                       node_shape="*", alpha=1)
 
             nx.draw_networkx_edges(self.city_graph, pos, width=0.1, alpha=0.2)
 
@@ -218,19 +222,32 @@ class City:
 
             nx.write_gexf(self.city_graph, "city-gephi.gexf", encoding="utf-8")
 
-            plt.title("City Graph - Total City Blocks({}), Residences({}), Businesses({}), Blockages({}), Walkways({"
-                      "})".format(len(self.grid_map) * len(self.grid_map[0]), len(residence_locations),
-                                  len(business_locations), len(blocked_locations), len(walkway_locations)),
-                      fontsize="9")
+            if top_node:
+                plt.title(
+                    "City Graph - Total City Blocks({}), Residences({}), Businesses({}), Blockages({}), Walkways({"
+                    "}\nTop location({}))".format(len(self.grid_map) * len(self.grid_map[0]), len(residence_locations),
+                                                  len(business_locations), len(blocked_locations),
+                                                  len(walkway_locations), top_node.location), fontsize="9")
+            else:
+                plt.title(
+                    "City Graph - Total City Blocks({}), Residences({}), Businesses({}), Blockages({}), Walkways({"
+                    "})".format(len(self.grid_map) * len(self.grid_map[0]), len(residence_locations),
+                                len(business_locations), len(blocked_locations), len(walkway_locations)), fontsize="9")
+            labels = ["walkway", "residence", "business", "blockage"]
+            if top_node:
+                labels.append("top_location")
 
-            legend = plt.legend(shadow=True, labels=["walkway", "residence", "business", "blockage"], loc="lower left")
+            legend = plt.legend(shadow=True, labels=labels, loc="lower left")
 
             for label in legend.get_texts():
-                label.set_fontsize('small')
+                label.set_fontsize("small")
 
             for label in legend.get_lines():
-                label.set_linewidth(0.2)
+                label.set_linewidth(5)
 
             plt.axis('off')
-            plt.savefig("city.png")  # save as png
+            if top_node:
+                plt.savefig("city-with-top-location.png")
+            else:
+                plt.savefig("city.png")  # save as png
             plt.show(block=False)

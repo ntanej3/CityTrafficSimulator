@@ -101,7 +101,7 @@ def run_simulation(city, num_peds):
     return sorted(intersect_dict.items(), key=lambda x: x[1], reverse=True)
 
 
-def print_outtable(simulation_summary, grid_size):
+def print_outtable(simulation_summary, grid_size, city):
     print("\nSimulation Summary\n")
     """
     A helper function to pretty print a table of results
@@ -123,6 +123,7 @@ def print_outtable(simulation_summary, grid_size):
             collisions = pedestrian_report[pedestrian_count]["Number_Collisions"]
             if collisions >= max_collisions:
                 top_place = pedestrian_report[pedestrian_count]["Top_Location"]
+                max_collisions = collisions
             table.append_row(
                 [str(grid_size), str(simulation_number), str(pedestrian_report[pedestrian_count]["Pedestrians"]),
                  str(pedestrian_report[pedestrian_count]["Top_Location"]),
@@ -130,8 +131,12 @@ def print_outtable(simulation_summary, grid_size):
 
     print(table)
 
-    print("\nThe top location for pedestrian traffic is located at the node located at {} with {} collisions.\n".format(
-        top_place, max_collisions))
+    print(
+        "\nThe top location for pedestrian traffic is located at the node located at {} with {} collisions (Also "
+        "saved as city-with-top-location.png).\n".format(
+            top_place, max_collisions))
+
+    city.print(True, False, top_place)
 
 
 def main():
@@ -172,7 +177,7 @@ def main():
         simulation_summary[simulation] = pedestrian_summary
         simulation += 1
 
-    print_outtable(simulation_summary, size)
+    print_outtable(simulation_summary, size, city)
 
     simulation_reports = []
     simulation_reports.extend([report for report in simulation_summary.values()])
