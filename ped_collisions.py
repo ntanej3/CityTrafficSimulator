@@ -101,6 +101,27 @@ def run_simulation(city, num_peds):
     return sorted(intersect_dict.items(), key=lambda x: x[1], reverse=True)
 
 
+def query_output_preference():
+    """
+    Function to query user as to whether to print out grid image
+    and whether to
+    """
+    while True:
+        query_grid = input("Do you wish to output an image of the city grid? (y/n) (Note: grids of greater than 20 do not display well)")
+        if query_grid.lower() in ['y','n']:
+            query_grid = True if query_grid.lower() == 'y' else False
+            break
+        else:
+            print("Invalid response. Try again.")
+    while True:
+        query_graph = input("Do you wish to automatically export a Gephi file of the resulting grid? (y/n)")
+        if query_graph.lower() in ['y','n']:
+            query_graph = True if query_graph.lower() == 'y' else False
+            break
+        else:
+            print("Invalid response. Try again.")
+    return (query_grid, query_graph)
+
 def print_outtable(simulation_summary, grid_size, city):
     print("\nSimulation Summary\n")
     """
@@ -155,11 +176,13 @@ def main():
 
     (min_num_peds, max_num_peds) = query_number_pedestrians(size)  # Query user for number of pedestrians
 
+    out_pref = query_output_preference() # Query user as to whether to print view of city or output png/Gephi files
+
     city = City.generate_random_city(size, size)  # Build the city network
 
-    print("\nHere is the randomly generated city grid that will be used for simulation (saved as city.png):\n")
-
-    city.print(True, True)  # Display city network
+    if out_pref[0]:
+        print("\nHere is the randomly generated city grid that will be used for simulation (saved as city.png):\n")
+    city.print(out_pref[0], out_pref[1])  # Display city network if user requests
 
     simulation_summary = {}  # Container for all results summary
     simulation = 1
