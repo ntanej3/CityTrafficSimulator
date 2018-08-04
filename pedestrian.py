@@ -108,6 +108,8 @@ class Pedestrian(object):
             try:
                 pedestrians.append(Pedestrian("Ped" + str(ped_num), city, start, end,
                                               cls.get_shortes_path(city_unblocked, commute, path_cache)))
+            except nx.NetworkXNoPath as e:
+                e
             finally:
                 ped_num += 1
 
