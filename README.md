@@ -2,7 +2,7 @@
 
 ## Team Member(s):
 
-Neha Taneja
+Neha Tanej
 
 Nicholas Wolf
 
@@ -35,6 +35,50 @@ To test this multiple simulations were run on a several city grids, each with a 
 
 ## Analytical Summary of your findings:
 
+The following multiple runs of multiple simulations seems to indicate a convergence around walkway node types as the optimal place to situated a location for maximum foot traffic. This isn't necessarily intuitive. We would assume perhaps that given the assumption in this model (and in real life) that a pedestrian orginates and has a destination in a residence/business, one might expect hotspots to be at those locations. However, the parameters for this model suggest that in fact hotspots take place in the unoccuped walkways between those locations.
+
+These simulations were run with a city grid generated with probability of .35 for a node being a walkway, .25 for it to be a residence, .35 for it to be a business, and .05 to be a blocked node.
+
+Results for 10 and 20 size grids, multiple selections for pedestrians and number of simulations produced:
+
+| Gridsize | # Pedestrians | # Simulations | Top Location | Location Type |
+|----------|---------------|---------------|--------------|---------------|
+| 10       | 10            | 100           | (4,3)        | Residence     |
+| 10       | 10            | 1000          | (3,2)        | Walkway       |
+| 10       | 10            | 5000          | (6,1)        | Walkway       |
+| 10       | 10            | 10000         | (2,6)        | Business      |
+| 10       | 20            | 100           | (4,4)        | Walkway       |
+| 10       | 20            | 1000          | (4,5)        | Business      |
+| 10       | 20            | 5000          | (2,5)        | Walkway       |
+| 10       | 20            | 10000         | (5,4)        | Residence     |
+| 10       | 20            | 20000         | (4,3)        | Walkway       |
+| 10       | 30            | 100           | (6,4)        | Walkway       |
+| 10       | 30            | 1000          | (4,1)        | Residence     |
+| 10       | 30            | 5000          | (3,4)        | Walkway       |
+| 10       | 30            | 10000         | (3,5)        | Business      |
+| 10       | 30            | 20000         | (2,1)        | Business      |
+| 10       | 40            | 100           | (4,1)        | Walkway       |
+| 10       | 40            | 1000          | (5,3)        | Walkway       |
+| 10       | 40            | 5000          | (5,6)        | Walkway       |
+| 10       | 40            | 10000         | (3,5)        | Business      |
+| 10       | 40            | 20000         | (4,3)        | Walkway       |
+| 20       | 10            | 100           | (8,14)       | Walkway       |
+| 20       | 10            | 1000          | (11,9)       | Walkway       |
+| 20       | 10            | 5000          | (6,6)        | Walkway       |
+| 20       | 10            | 10000         | (10,7)       | Walkway       |
+| 20       | 10            | 20000         | (4,10)       | Business      |
+| 20       | 20            | 100           | (13,10)      | Walkway       |
+| 20       | 20            | 1000          | (11,10)      | Walkway       |
+| 20       | 20            | 5000          | (10,5)       | Walkway       |
+| 20       | 20            | 10000         | (9,5)        | Walkway       |
+| 20       | 20            | 20000         | (8,8)        | Walkway       |
+| 20       | 30            | 100           | (7,27)       | Walkway       |
+| 20       | 30            | 1000          | (13,9)       | Walkway       |
+| 20       | 30            | 5000          | (12,9)       | Walkway       |
+| 20       | 30            | 10000         | (5,11)       | Walkway       |
+| 20       | 30            | 20000         | (9,5)        | Walkway       |
+
+Note the increasing number of walkways that proved to be hotspots, especially as the size of the city, number of pedestrians, and number of simulations grew.
 
 
 ## Instructions on how to use the program:
@@ -47,15 +91,9 @@ This program is reliant on having the following modules installed:
 
 Run `ped_collisions.py` within directory to set parameters and run simulation.
 
-User will be prompted for the number of simulations to run, size of city grid to model, and number of pedestrians.
+User will be prompted for the number of simulations to run, size of city grid to model, a range of number of pedestrians to consider, whether to display an image of the city grid being used, and whether output files of the city grid network are desired.
 
-Note that simulations iterations that are too high (40, 50, 60, etc.) may take a while because of the necessary performance requirements of `networkx` and network traversing.
-
-Similarly, a city grid of too large a size will prove unwieldy. It is recommended that a grid be set at between 10 and 40 "blocks" in square length.
-
-Because each pedestrian needs a start residence, and because the proportion of residences in each city grid is preset, a simulation cannot be run with too many pedestrians. The program will prompt the user when too high of parameters are chosen in any of the above items.
-
-Once run, the program will output a basic ASCII rendition of the city grid generated, like this:
+Once run, if selected the program will output a basic ASCII rendition of the city grid generated, like this:
 
 ![Sample Table](https://github.com/nmwolf/Final_Project/blob/master/imgs/sample-city-grid.png)
 
@@ -63,13 +101,11 @@ R = Residences
 
 B = Businesses
 
-`+` = Blockage
+`*` = Blockage
 
 | | = Walkway
 
-`*` = Location with most foot traffic
-
-An image (.png) of the network graph will also be generated, along with a Gephi file (.gefx) to assist users with a richer view of the grid being modeled.
+If selected, an image (.png) of the network graph will also be generated, along with a Gephi file (.gefx) to assist users with a richer view of the grid being modeled.
 
 Example:
 
