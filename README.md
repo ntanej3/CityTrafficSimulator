@@ -127,13 +127,11 @@ When run, the program will generate for the user a table summarizing each simula
 ![Sample Table](https://github.com/nmwolf/Final_Project/blob/master/imgs/sample-results.png)
 
 
-```The location with most foot traffic from all the simulations for pedestrian traffic is located at the node located at CityLocationType.business, (4, 6) with 3 collisions (saved as city-with-top-location.png)```
+```The location with most foot traffic from all the simulations for pedestrian traffic is located at the node located at CityLocationType.business, (4, 6) with 2 collisions (saved as city-with-top-location.png)```
 
-Each row represents one simuluation of *n* pedestrians (in this case, 4), on a city grid of a size *k*, here 10.
+Each row represents one simuluation of *n* pedestrians (in this case, 4 and 5), on a city grid of a size *k*, here 10.
 
 The program looks at which locations (nodes, i.e. `CityLocation`) occurred most often in shortest pathways (the column "Number of Times Node in a Pedestrian Path")
-
-It also looks at nodes that occurred frequently in the same order location of many paths, i.e. occurred frequently in the first, second, third, fourth, etc. "step" of many pedestrians' pathways. This indicates literal collision -- many pedestrians are hitting that same location at the same stage in his or her journey, a further indication of a "hotspot." This number is recorded in the final column.
 
 
 ## All Sources Used:
