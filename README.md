@@ -29,10 +29,12 @@ The idea behind these parameters, as with any Monte Carlo simulation, is to cons
 
 ## Hypothesis or hypotheses before running the simulation:
 
-One expectation that we would have for the simulation is that walkways, rather than businesses or residences, would be the nodetype with the most traffic.
+Our central question for this particular simulation was whether the nodes/locations with the optimal pedestrian traffic would be those that were also residences and businesses, or near them, or whether walkways would be more likely to prove to be high traffic points.
 
+To test this multiple simulations were run on a several city grids, each with a different proportion of businesses, residences, and walkways.
 
-## Analytical Summary of your findings: (e.g. Did you adjust the scenario based on previous simulation outcomes?  What are the management decisions one could make from your simulation's output, etc.)
+## Analytical Summary of your findings:
+
 
 
 ## Instructions on how to use the program:
@@ -75,7 +77,7 @@ Example:
 
 The simulation relies on several Python classes. The `City` object is a `networkx` graph representing the city layout to be tested. Each `City` consists of a series of `CityLocation` nodes; a `CityLocation` is connected to other nodes, and has attributes such as a `GeoLocation` (latitude-longitude) and type (residence, business, walkway, blockage).
 
-The `Pedestrian` object has a start (`Pedestrian.start_location`), an end (`Pedestrian.end_location`), and a list of shortest simple paths (`networkx` simple paths) between those destinations (`Pedestrian.list_short_paths`).
+The `Pedestrian` object has a start (`Pedestrian.start_location`), an end (`Pedestrian.end_location`), and a shortest simple path (`networkx` simple paths) between those two points (`Pedestrian.list_short_paths`).
 
 When the simulation is run, it first builds the `City` object, then a set of `Pedestrian` objects. Lastly, it investigates the relationship of each pedestrian's paths to each others given the contours of the city.
 
@@ -87,7 +89,7 @@ When run, the program will generate for the user a table summarizing each simula
 ![Sample Table](https://github.com/nmwolf/Final_Project/blob/master/imgs/sample-results.png)
 
 
-The top location for pedstrian traffic is located at the node located at lat-long (8, 4)
+In this case, the top location for pedstrian traffic is located at the node located at lat-long (8, 4)
 
 Each row represents one simuluation of *n* pedestrians (in this case, 4), on a city grid of a size *k*, here 10.
 
