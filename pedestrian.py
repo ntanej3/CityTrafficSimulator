@@ -3,8 +3,7 @@ from typing import List
 
 import networkx as nx
 
-from city import (CityLocation,
-                  City, )
+from city import (CityLocation, City, )
 
 
 class PedestrianCommute(object):
@@ -109,10 +108,8 @@ class Pedestrian(object):
             try:
                 pedestrians.append(Pedestrian("Ped" + str(ped_num), city, start, end,
                                               cls.get_shortes_path(city_unblocked, commute, path_cache)))
-            except nx.NetworkXNoPath as e:
-                ped_num -= 1
-
-            ped_num += 1
+            finally:
+                ped_num += 1
 
         return pedestrians
 
