@@ -63,9 +63,11 @@ R = Residences
 
 B = Businesses
 
-`*` = Blockage
+`+` = Blockage
 
 | | = Walkway
+
+`*` = Location with most foot traffic
 
 An image (.png) of the network graph will also be generated, along with a Gephi file (.gefx) to assist users with a richer view of the grid being modeled.
 
