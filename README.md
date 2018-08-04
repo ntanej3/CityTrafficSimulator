@@ -138,7 +138,7 @@ It also looks at nodes that occurred frequently in the same order location of ma
 
 ## All Sources Used:
 
-No prior pedestrian simulation models were consulted prior to designing this program. However, further reading and alternative approaches to such modeling might be found at:
+No pedestrian simulation models were consulted prior to designing this program. However, further reading and alternative approaches to such modeling might be found at:
 
 Mehdi Moussaïd, Niriaska Perozo, Simon Garnier, Dirk Helbing, and Guy Theraulaz (2010), "The walking behaviour of pedestrian social groups and its impact on crowd dynamics" *PLoS One*, [10.1371/journal.pone.0010047](https://doi.org/10.1371/journal.pone.0010047).
 
