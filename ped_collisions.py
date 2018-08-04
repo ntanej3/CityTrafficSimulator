@@ -104,17 +104,18 @@ def run_simulation(city, num_peds):
 def query_output_preference():
     """
     Function to query user as to whether to print out grid image
-    and whether to
+    and whether to output a Gephi file of the network
+    :return:two-element Tuple with bool values
     """
     while True:
-        query_grid = input("Do you wish to output an image of the city grid? (y/n) (Note: grids of greater than 20 do not display well) ")
+        query_grid = input("Do you wish to output an image of the city grid? (y/n) (Note: grids of greater than 20 do not display well)")
         if query_grid.lower() in ['y','n']:
             query_grid = True if query_grid.lower() == 'y' else False
             break
         else:
             print("Invalid response. Try again.")
     while True:
-        query_graph = input("Do you wish to automatically export a Gephi file of the resulting grid? (y/n) ")
+        query_graph = input("Do you wish to automatically export a Gephi file of the resulting grid? (y/n)")
         if query_graph.lower() in ['y','n']:
             query_graph = True if query_graph.lower() == 'y' else False
             break
