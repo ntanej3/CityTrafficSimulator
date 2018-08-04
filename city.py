@@ -5,6 +5,8 @@ from typing import List
 import matplotlib.pyplot as plt
 import networkx as nx
 
+import numpy as np
+
 
 class GeoLocation(object):
 
@@ -126,38 +128,30 @@ class City:
 
         print("Generating a random city")
 
+        weight_distribution = [(CityLocationType.walkway, 30), (CityLocationType.residence, 30),
+                               (CityLocationType.business, 25), (CityLocationType.blockage, 15)]
+
         city_grid = []
         for row in range(0, rows):
             row_list = []
             for column in range(0, columns):
-                location = CityLocation(GeoLocation(row, column), cls.get_random_location_type(rows * columns))
+                location = CityLocation(GeoLocation(row, column), cls.get_random_location_type(weight_distribution))
                 row_list.append(location)
             city_grid.append(row_list)
 
         return City(city_grid, nx.Graph())
 
     @classmethod
-    def get_random_location_type(cls, range: int) -> CityLocationType:
+    def get_random_location_type(cls, weight_distribution: dict) -> CityLocationType:
 
-        is_walkway = cls.get_random(50, range)
-        is_residence = cls.get_random(25, range)
-        is_business = cls.get_random(20, range)
-        is_blockage = cls.get_random(5, range)
-
-        if is_walkway:
-            return CityLocationType.walkway
-        elif is_residence:
-            return CityLocationType.residence
-        elif is_business:
-            return CityLocationType.business
-        elif is_blockage:
-            return CityLocationType.blockage
-        else:
-            return CityLocationType.walkway
-
-    @classmethod
-    def get_random(cls, probability: float, range: int) -> bool:
-        return random.randrange(0, range) <= probability
+        total = sum(w for c, w in weight_distribution)
+        r = random.uniform(0, total)
+        upto = 0
+        for c, w in weight_distribution:
+            if upto + w >= r:
+                return c
+            upto += w
+        assert False, "Shouldn't get here"
 
     def print(self, as_graph: bool = False, as_grid: bool = True, top_node_list: list = None):
 
