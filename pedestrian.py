@@ -8,6 +8,10 @@ from city import (CityLocation,
                   GeoLocation,
                   CityLocationType, )
 
+# Used for caching shortest paths between a source and destination. With so many simulations, it is possible that two
+# pedestrians have the same source and destination.
+path_cache = dict()
+
 
 class PedestrianCommute(object):
     """
@@ -129,7 +133,6 @@ class Pedestrian(object):
     
         """
         pedestrians = []
-        path_cache = dict()
         ped_num = 1
         for start, end in combined_nodes:
             if num_peds <= 5:
@@ -139,7 +142,7 @@ class Pedestrian(object):
             commute = PedestrianCommute(start, end)
             try:
                 pedestrians.append(Pedestrian("Ped" + str(ped_num), city, start, end,
-                                              cls.get_shortest_path_from_cache(city_unblocked, commute, path_cache)))
+                                              cls.get_shortest_path_from_cache(city_unblocked, commute)))
             except nx.NetworkXNoPath as e:
                 e
             finally:
@@ -148,7 +151,7 @@ class Pedestrian(object):
         return pedestrians
 
     @classmethod
-    def get_shortest_path_from_cache(cls, city_graph: nx.Graph, commute: PedestrianCommute, path_cache: dict) -> list:
+    def get_shortest_path_from_cache(cls, city_graph: nx.Graph, commute: PedestrianCommute) -> list:
         path = path_cache.get(commute, None)
 
         if path is None:

@@ -120,8 +120,8 @@ class CityLocation(object):
 
 
 # Of all locations in the city 30% should be walkways, 30% residences, 25% businesses, and 15% blockages.
-CITY_LOCATION_TYPE_WEIGHT_DISTRIBUTION_ = [(CityLocationType.walkway, 30), (CityLocationType.residence, 30),
-                                           (CityLocationType.business, 25), (CityLocationType.blockage, 15)]
+CITY_LOCATION_TYPE_WEIGHT_DISTRIBUTION_ = [(CityLocationType.walkway, 35), (CityLocationType.residence, 25),
+                                           (CityLocationType.business, 35), (CityLocationType.blockage, 5)]
 
 
 class City:
