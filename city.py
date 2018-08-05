@@ -1,14 +1,27 @@
 import random
 from enum import Enum
-from typing import List
+from typing import (List,
+                    Tuple, )
 
 import matplotlib.pyplot as plt
 import networkx as nx
 
-import numpy as np
-
 
 class GeoLocation(object):
+    """
+    Represents the physical geographical location of a place in terms of latitude and longitude.
+
+    >>> GeoLocation(12, 10).latitude
+    12
+    >>> GeoLocation(12, 10).longitude
+    10
+    >>> GeoLocation(10, 10) == GeoLocation(10, 10)
+    True
+    >>> GeoLocation(12, 10)
+    (12, 10)
+
+    For simplicity, for the purpose of this application, latitude and longitude are only assumed to be integers.
+    """
 
     def __init__(self, latitude: int, longitude: int):
 
@@ -43,6 +56,9 @@ class GeoLocation(object):
 
 
 class CityLocationType(Enum):
+    """
+    Represents the type of a block (called location in this simulation) in city.
+    """
     residence = 1
     business = 2
     blockage = 3
@@ -50,12 +66,26 @@ class CityLocationType(Enum):
 
 
 class CityLocation(object):
+    """
+    A CityLocation (city block) is identified by a physical location (GeoLocation) and a location type (
+    CityLocationType)
 
-    def __init__(self, location: GeoLocation, location_type: CityLocationType):
-        self.location = location
+    Note: This is a simplified representation of city block for the purpose of this application. It is understood in
+    actuality a block might be a collection of geo locations.
+
+    >>> CityLocation(GeoLocation(10, 12), CityLocationType.residence).is_business()
+    False
+    >>> CityLocation(GeoLocation(10, 12), CityLocationType.residence).is_residence()
+    True
+    >>> CityLocation(GeoLocation(10, 12), CityLocationType.residence)
+    residence, (10, 12)
+    """
+
+    def __init__(self, geo_location: GeoLocation, location_type: CityLocationType):
+        self.geo_location = geo_location
         self.location_type = location_type
 
-    def location(self) -> GeoLocation:
+    def geo_location(self) -> GeoLocation:
         return self.location
 
     def location_type(self) -> CityLocationType:
@@ -74,38 +104,65 @@ class CityLocation(object):
         return self.location_type == CityLocationType.blockage
 
     def __str__(self) -> str:
-        return "{}, {}".format(self.location_type, self.location.__str__())
+        return "{}, {}".format(self.location_type.name, self.geo_location.__str__())
 
     def __repr__(self):
         return self.__str__()
 
     def __eq__(self, o: object) -> bool:
         if isinstance(o, self.__class__):
-            return self.location == o.location and self.location_type == o.location_type
+            return self.geo_location == o.geo_location and self.location_type == o.location_type
         else:
             return False
 
     def __hash__(self) -> int:
-        return 29 * hash(self.location.__hash__) * hash(self.location_type.__hash__)
+        return 29 * hash(self.geo_location.__hash__) * hash(self.location_type.__hash__)
+
+
+# Of all locations in the city 30% should be walkways, 30% residences, 25% businesses, and 15% blockages.
+CITY_LOCATION_TYPE_WEIGHT_DISTRIBUTION_ = [(CityLocationType.walkway, 30), (CityLocationType.residence, 30),
+                                           (CityLocationType.business, 25), (CityLocationType.blockage, 15)]
 
 
 class City:
+    """
 
-    def __init__(self, grid_map: List[List[CityLocation]], city_graph: nx.Graph):
+    A City is represented both as a matrix (List[List[CityLocation]]) and as a NetworkX graph. Matrix representation
+    is used for simplicity of generation, but the more important graph notation is used for running simulations and
+    calculating statistics.
+
+    >>> len(City([[CityLocation(GeoLocation(1, 2), CityLocationType.residence)], [CityLocation(GeoLocation(3, 4),
+    ... CityLocationType.business)]]).city_graph.nodes())
+    2
+
+    """
+
+    def __init__(self, grid_map: List[List[CityLocation]]):
         self.grid_map = grid_map
         self.city_graph = self.generate_graph_from_grid_map(grid_map)
 
     @classmethod
     def generate_graph_from_grid_map(cls, grid_map: List[List[CityLocation]]) -> nx.Graph:
 
+        """
+        Generates a nx.Graph of city from a 2D grid map (represented by List[List[CityLocation]]). All adjacent nodes
+        are connected by edges. Edges are blocked (can not be traversed) when location type is blocked.
+
+        >>> City.generate_graph_from_grid_map([[CityLocation(GeoLocation(1, 2), CityLocationType.residence)],
+        ... [CityLocation(GeoLocation(3, 4), CityLocationType.business)]]).nodes()
+        NodeView((residence, (1, 2), business, (3, 4)))
+
+        :param grid_map: The 2D map of city in the form of List[List[CityLocation]]
+        :return: A NetworkX Graph representing city.
+        """
         city_graph = nx.Graph()
 
-        # Add nodes for each point in the city
+        # Add nodes for each point in the city 2D map
         for row in range(0, len(grid_map)):
             for column in range(0, len(grid_map[0])):
                 city_graph.add_node(grid_map[row][column])
 
-        # connect city nodes
+        # connect adjacent city nodes
         for row in range(0, len(grid_map)):
             for column in range(0, len(grid_map[0])):
                 if row + 1 < len(grid_map):
@@ -121,29 +178,65 @@ class City:
 
     @classmethod
     def add_edge(cls, city_graph: nx.Graph, source: CityLocation, destination: CityLocation):
+        """
+        Adds an edge in the given graph between source and destination, marks edge as blocked when that path cannot
+        be traversed.
+
+        :param city_graph: The graph to add edge in
+        :param source: The source of edge
+        :param destination: The destination of edge
+
+        """
         city_graph.add_edge(source, destination, blocked=source.is_blocked() or destination.is_blocked())
 
     @classmethod
     def generate_random_city(cls, rows: int, columns: int):
+        """
+        This is the main factory method that is used to generate a random city based on the grid size.
 
-        print("Generating a random city")
+        >>> len(City.generate_random_city(30, 20).city_graph.nodes())
+        600
 
-        weight_distribution = [(CityLocationType.walkway, 30), (CityLocationType.residence, 30),
-                               (CityLocationType.business, 25), (CityLocationType.blockage, 15)]
+        :param rows: The number of rows (East-West lanes in the city)
+        :param columns:  The number of columns (North-South lanes in the city)
+        :return: A city generated at random.
+        """
 
         city_grid = []
         for row in range(0, rows):
             row_list = []
             for column in range(0, columns):
-                location = CityLocation(GeoLocation(row, column), cls.get_random_location_type(weight_distribution))
+                location = CityLocation(GeoLocation(row, column),
+                                        cls.get_random_location_type(CITY_LOCATION_TYPE_WEIGHT_DISTRIBUTION_))
                 row_list.append(location)
             city_grid.append(row_list)
 
-        return City(city_grid, nx.Graph())
+        return City(city_grid)
 
     @classmethod
-    def get_random_location_type(cls, weight_distribution: dict) -> CityLocationType:
+    def get_random_location_type(cls, weight_distribution: List[Tuple]):
 
+        """
+        Generates a random location type for a city location based on provided weight distribution.
+
+        >>> City.get_random_location_type([("loc1", 100), ("loc2", 0)])
+        'loc1'
+        >>> City.get_random_location_type([("loc1", 100), ("loc2", 0)])
+        'loc1'
+        >>> City.get_random_location_type([("loc1", 100), ("loc2", 0)])
+        'loc1'
+        >>> City.get_random_location_type([("loc1", 100), ("loc2", 0)])
+        'loc1'
+        >>> City.get_random_location_type([("loc1", 100), ("loc2", 0)])
+        'loc1'
+        >>> City.get_random_location_type([("loc1", 100), ("loc2", 0)])
+        'loc1'
+        >>> City.get_random_location_type([("loc1", 100), ("loc2", 0)])
+        'loc1'
+
+        :param weight_distribution: The distribution of relative weight of chance of getting each city location.
+        :return: An one with city location type, based on probability
+        """
         total = sum(w for c, w in weight_distribution)
         r = random.uniform(0, total)
         upto = 0
@@ -153,27 +246,40 @@ class City:
             upto += w
         assert False, "Shouldn't get here"
 
-    def print(self, as_graph: bool = False, as_grid: bool = True, top_node_list: list = None):
+    def print(self, as_graph: bool = False, as_grid: bool = True, mark_node_list: list = None,
+              marked_node_legend: str = ""):
+        """
+        A utility function to print the city on console, and as a matplotlib network graph
 
-        if as_grid and len(self.grid_map) <= 50:
-            top_node_set = None
-            if top_node_list:
-                top_node_set = set(map(lambda loc: (loc.location.latitude, loc.location.longitude), top_node_list))
+        :param as_graph: prints the city as matplotlib graph when True
+        :param as_grid: prints the city as 2D when True
+        :param mark_node_list:  Marks these nodes on city graph as special when present.
+        :param marked_node_legend: The legend of node to be marked
+
+        """
+
+        if as_grid:
+            mark_geo_location_set = None
+            if mark_node_list:
+                mark_geo_location_set = set(
+                    map(lambda loc: (loc.geo_location.latitude, loc.geo_location.longitude), mark_node_list))
             city = ""
             for row in self.grid_map:
                 city_lane = "| "
                 for location in row:
-                    if top_node_set and (location.location.latitude, location.location.longitude) in top_node_set:
+                    if mark_geo_location_set and (
+                            location.geo_location.latitude, location.geo_location.longitude) in mark_geo_location_set:
                         city_lane = city_lane + "*    | "
                     elif location.is_walkway():
                         city_lane = city_lane + "     | "
                     elif location.is_blocked():
-                        city_lane = city_lane + "+    | "
+                        city_lane = city_lane + "X    | "
                     elif location.is_business():
                         city_lane = city_lane + "B    | "
                     elif location.is_residence():
                         city_lane = city_lane + "R    | "
-                    elif top_node_set and (location.location.latitude, location.location.longitude) in top_node_set:
+                    elif mark_geo_location_set and (
+                            location.geo_location.latitude, location.geo_location.longitude) in mark_geo_location_set:
                         city_lane = city_lane[0:2] + "*" + city_lane[3:]
                     else:
                         city_lane = city_lane + "     | "
@@ -183,10 +289,10 @@ class City:
             print("Legend")
             print("R - Residence")
             print("B - Business")
-            print("+ - Blockage")
+            print("X - Blockage")
             print("  - Walkway")
-            if top_node_list:
-                print("* - Location with most foot traffic")
+            if mark_node_list:
+                print("* - {}".format(marked_node_legend))
 
         if as_graph:
 
@@ -208,22 +314,19 @@ class City:
                     blocked_locations.append(location)
 
             nx.draw_networkx_nodes(self.city_graph, pos, nodelist=walkway_locations, node_color="black", node_size=20,
-                                   node_shape="x", alpha=0.8)
+                                   node_shape=".", alpha=0.8)
             nx.draw_networkx_nodes(self.city_graph, pos, nodelist=residence_locations, node_color="yellow",
                                    node_size=250, node_shape="s", alpha=0.8)
             nx.draw_networkx_nodes(self.city_graph, pos, nodelist=business_locations, node_color="blue", node_size=250,
                                    node_shape="o", alpha=0.8)
             nx.draw_networkx_nodes(self.city_graph, pos, nodelist=blocked_locations, node_color="red", node_size=200,
-                                   node_shape="+", alpha=0.8)
+                                   node_shape="x", alpha=0.8)
 
-            if top_node_list:
-                nx.draw_networkx_nodes(self.city_graph, pos, nodelist=top_node_list, node_color="green", node_size=300,
+            if mark_node_list:
+                nx.draw_networkx_nodes(self.city_graph, pos, nodelist=mark_node_list, node_color="green", node_size=300,
                                        node_shape="*", alpha=1)
 
             nx.draw_networkx_edges(self.city_graph, pos, width=0.1, alpha=0.2)
-
-            labels = dict([(loc, loc.location_type.name) for loc in self.city_graph.nodes()])
-            # nx.draw_networkx_labels(self.city_graph, pos, labels, font_size=5, alpha=0.8)
 
             nx.write_gexf(self.city_graph, "city-gephi.gexf", encoding="utf-8")
 
@@ -234,8 +337,8 @@ class City:
 
             labels = ["walkway", "residence", "business", "blockage"]
 
-            if top_node_list:
-                labels.append("top_locations")
+            if mark_node_list:
+                labels.append(marked_node_legend)
 
             legend = plt.legend(shadow=True, labels=labels, loc="lower left")
 
@@ -246,8 +349,10 @@ class City:
                 label.set_linewidth(5)
 
             plt.axis('off')
-            if top_node_list:
-                plt.savefig("city-with-top-location.png")
+
+            # save as png
+            if mark_node_list:
+                plt.savefig("city-with-marked_locations.png")
             else:
-                plt.savefig("city.png")  # save as png
+                plt.savefig("city.png")
             plt.show(block=False)

@@ -8,19 +8,18 @@ and Nicholas Wolf
 
 # !/usr/bin/python3
 
-from city import (City,
-                  CityLocation, )
-from pedestrian import Pedestrian
-import random
-import networkx as nx
+from typing import Tuple
+
 from beautifultable import BeautifulTable
 
-from typing import Tuple
+from city import (City, )
+from pedestrian import Pedestrian
 
 
 def query_number_pedestrians(grid_size) -> Tuple[int, int]:
     """
     Function to query user for number of pedestrians to use for the simulation
+
     :return: integer greater than 0
     """
     while True:
@@ -77,6 +76,7 @@ def query_number_simulations() -> int:
 
 
 def run_simulation(city, num_peds):
+    print("Generating {} random pedestrians".format(num_peds))
     pedestrians = Pedestrian.generate_random_pedestrians(num_peds, city)
 
     """
@@ -108,22 +108,25 @@ def query_output_preference():
     :return:two-element Tuple with bool values
     """
     while True:
-        query_grid = input("Do you wish to output an image of the city grid? (y/n) (Note: grids of greater than 20 do not display well)")
-        if query_grid.lower() in ['y','n']:
+        query_grid = input(
+            "Do you wish to output an image of the city grid? (y/n) (Note: grids of greater than 20 do not display "
+            "well) ")
+        if query_grid.lower() in ['y', 'n']:
             query_grid = True if query_grid.lower() == 'y' else False
             break
         else:
             print("Invalid response. Try again.")
     while True:
-        query_graph = input("Do you wish to automatically export a Gephi file of the resulting grid? (y/n)")
-        if query_graph.lower() in ['y','n']:
+        query_graph = input("Do you wish to automatically export a Gephi file of the resulting grid? (y/n) ")
+        if query_graph.lower() in ['y', 'n']:
             query_graph = True if query_graph.lower() == 'y' else False
             break
         else:
             print("Invalid response. Try again.")
     return (query_grid, query_graph)
 
-def print_outtable(simulation_summary, grid_size, city):
+
+def print_aggregate_statistics(simulation_summary, grid_size, city):
     print("\nSimulation Summary\n")
     """
     A helper function to pretty print a table of results
@@ -161,12 +164,12 @@ def print_outtable(simulation_summary, grid_size, city):
 
     print(table)
 
-    print("\nLocation with most foot traffic for each simulation are saved to city-with-top-location.png\n")
-    city.print(True, True, top_location_for_all_simulations)
+    print("\nLocation with most foot traffic for each simulation (saved to city-with-marked_locations.png\n")
+    city.print(True, True, top_location_for_all_simulations, "Locations with most foot traffic")
 
     print(
         "\nThe location with most foot traffic from all the simulations for pedestrian traffic is located at the node "
-        "located at {} with {} collisions (saved as city-with-top-location.png).\n".format(top_place_of_all_simulations,
+        "located at {} with {} collisions (saved as city-with-marked_locations.png).\n".format(top_place_of_all_simulations,
                                                                                            highest_collisions_of_all_simulations))
 
 
@@ -177,8 +180,10 @@ def main():
 
     (min_num_peds, max_num_peds) = query_number_pedestrians(size)  # Query user for number of pedestrians
 
-    out_pref = query_output_preference() # Query user as to whether to print view of city or output png/Gephi files
+    out_pref = query_output_preference()  # Query user as to whether to print view of city or output png/Gephi files
 
+    print("--------------------")
+    print("Generating a random city")
     city = City.generate_random_city(size, size)  # Build the city network
 
     if out_pref[0]:
@@ -208,7 +213,7 @@ def main():
         simulation_summary[simulation] = pedestrian_summary
         simulation += 1
 
-    print_outtable(simulation_summary, size, city)
+    print_aggregate_statistics(simulation_summary, size, city)
 
     simulation_reports = []
     simulation_reports.extend([report for report in simulation_summary.values()])

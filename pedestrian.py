@@ -3,10 +3,17 @@ from typing import List
 
 import networkx as nx
 
-from city import (CityLocation, City, )
+from city import (CityLocation,
+                  City,
+                  GeoLocation,
+                  CityLocationType, )
 
 
 class PedestrianCommute(object):
+    """
+    Represents the commute of a pedestrian from a start location to a destination in a city.
+
+    """
 
     def __init__(self, start_location: CityLocation, destination: CityLocation):
         self.start_location = start_location
@@ -29,6 +36,12 @@ class PedestrianCommute(object):
 
 
 class Pedestrian(object):
+    """
+    Represents a pedestrian in a city that has to commute from a start city location to a destination city location via
+    a path.
+
+    It is assumed that a pedestrain will always take the shortest possible path.
+    """
 
     def __init__(self, name: str, city: City, start_location: CityLocation, destination: CityLocation, shortest_path):
         self.name = name
@@ -37,37 +50,58 @@ class Pedestrian(object):
         self.shortest_path = shortest_path
 
     @classmethod
-    def filter_locations(cls, city_graph: nx.Graph, location_checker):
-        return [location for location in city_graph.nodes() if location_checker(location)]
-
-    @classmethod
     def filter_locations(cls, city: City, filter_criteria):
+        """
+        A utility to filter nodes in a graph by a given criteria.
+
+        >>> len(Pedestrian.filter_locations(City([[CityLocation(GeoLocation(1, 2), CityLocationType.residence)],
+        ... [CityLocation(GeoLocation(3, 4), CityLocationType.business)]]), CityLocation.is_residence))
+        1
+
+        :param city_graph: The graph to filter nodes from
+        :param location_checker: The criteria to filer locations by.
+        :return: Filtered nodes
+        """
+
         return [location for location in city.city_graph if filter_criteria(location)]
 
     @classmethod
     def generate_random_pedestrians(cls, num_peds, city: City) -> List:
+        """
+        Generates random pedestrians at random city locations with random destinations.
 
-        print("Generating {} random pedestrians".format(num_peds))
+        >>> [location in list(map(lambda ped: ped.pedestrian_commute.start_location,
+        ... Pedestrian.generate_random_pedestrians(50, City.generate_random_city(10, 10)))) for location in [
+        ... CityLocationType.business, CityLocationType.blockage]]
+        [False, False]
+        >>> [location in list(map(lambda ped: ped.pedestrian_commute.destination,
+        ... Pedestrian.generate_random_pedestrians(50, City.generate_random_city(10, 10)))) for location in [
+        ... CityLocationType.residence, CityLocationType.blockage]]
+        [False, False]
+
+        :param num_peds: The number of pedestrians to generate
+        :param city: The city to generate pedestrians in.
+        :return: A List of random Pedestrians
+        """
 
         """
-        For pedestrian start origins, we randomly select, without replacement, n number of residences or walkways 
+        For pedestrian start origins, we randomly select, without replacement, n number of residences or walkways
         from city grid, one for each pedestrian
         """
-
         res_nodes = cls.filter_locations(city, lambda location: CityLocation.is_residence(
             location) or CityLocation.is_walkway(location))
 
         try:
             start_nodes = random.sample(res_nodes, num_peds)
         except ValueError:
-            print("Sorry, the city grid size is not sufficiently large for this number of pedestrians.")
-            return None
+            print("Sorry, the randomly generated city is such that it cannot accommodate these many pedestrians. "
+                  "Please rerun.")
+            exit(0)
 
         """
         For destinations, we randomly select, without replacement, n number of businesses or walkway from city grid,
         one for each pedestrian
         """
-
         business_nodes = cls.filter_locations(city, lambda location: CityLocation.is_business(
             location) or CityLocation.is_walkway(location))
 
@@ -84,7 +118,6 @@ class Pedestrian(object):
         where blocked nodes have been removed so that shortest paths for pedestrians will only include
         open pathways
         """
-
         blocked_nodes = [i for i in city.city_graph.nodes() if CityLocation.is_blocked(i) == True]
 
         city_unblocked = city.city_graph.copy(as_view=False)
@@ -95,7 +128,6 @@ class Pedestrian(object):
         and using that to construct a generator of all shortest paths for each pedestrian
     
         """
-
         pedestrians = []
         path_cache = dict()
         ped_num = 1
@@ -107,7 +139,7 @@ class Pedestrian(object):
             commute = PedestrianCommute(start, end)
             try:
                 pedestrians.append(Pedestrian("Ped" + str(ped_num), city, start, end,
-                                              cls.get_shortes_path(city_unblocked, commute, path_cache)))
+                                              cls.get_shortest_path_from_cache(city_unblocked, commute, path_cache)))
             except nx.NetworkXNoPath as e:
                 e
             finally:
@@ -116,7 +148,7 @@ class Pedestrian(object):
         return pedestrians
 
     @classmethod
-    def get_shortes_path(cls, city_graph: nx.Graph, commute: PedestrianCommute, path_cache: dict) -> list:
+    def get_shortest_path_from_cache(cls, city_graph: nx.Graph, commute: PedestrianCommute, path_cache: dict) -> list:
         path = path_cache.get(commute, None)
 
         if path is None:
