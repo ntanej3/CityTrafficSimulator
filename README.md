@@ -127,7 +127,7 @@ When run, the program will generate for the user a table summarizing each simula
 ![Sample Table](https://github.com/nmwolf/Final_Project/blob/master/imgs/sample-results.png)
 
 
-```The location with most foot traffic from all the simulations for pedestrian traffic is located at the node located at CityLocationType.business, (4, 6) with 2 collisions (saved as city-with-top-location.png)```
+```The location with most foot traffic from all the simulations for pedestrian traffic is located at the node located at business, (8, 12) with 13 collisions (saved as city-with-marked_locations.png).```
 
 Each row represents one simuluation of *n* pedestrians (in this case, 4 and 5), on a city grid of a size *k*, here 10.
 
