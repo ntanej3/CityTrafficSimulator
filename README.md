@@ -1,11 +1,5 @@
 # Title: Testing City Hotspots Using Monte Carlo Simulations of Pedestrian Traffic
 
-## Team Member(s):
-
-Neha Taneja
-
-Nicholas Wolf
-
 # Monte Carlo Simulation Scenario & Purpose:
 
 Businesses and city planners often need to address where best to locate ameneties in order to maximize foot traffic. One way to solve this problem is to run multiple simulations of pedestrians traversing a city grid, treating such a grid as a network of pathways connecting businesses, residences, and occasionally blocked paths, and looking at where pedestrians frequently cross paths.
