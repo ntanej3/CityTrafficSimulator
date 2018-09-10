@@ -89,7 +89,7 @@ User will be prompted for the number of simulations to run, size of city grid to
 
 Once run, if selected the program will output a basic ASCII rendition of the city grid generated, like this:
 
-![Sample Table](https://github.com/nmwolf/Final_Project/blob/master/imgs/sample-city-grid.png)
+![Sample Table](https://github.com/ntanej3/CityTrafficSimulator/blob/master/imgs/sample-city-grid.png)
 
 R = Residences
 
@@ -103,7 +103,7 @@ If selected, an image (.png) of the network graph will also be generated, along 
 
 Example:
 
-![Sample Network Graph](https://github.com/nmwolf/Final_Project/blob/master/imgs/network-image-example.png)
+![Sample Network Graph](https://github.com/ntanej3/CityTrafficSimulator/blob/master/imgs/network-image-example.png)
 
 ## Program structure
 
@@ -118,7 +118,7 @@ When the simulation is run, it first builds the `City` object, then a set of `Pe
 
 When run, the program will generate for the user a table summarizing each simulation like this example:
 
-![Sample Table](https://github.com/nmwolf/Final_Project/blob/master/imgs/sample-results.png)
+![Sample Table](https://github.com/ntanej3/CityTrafficSimulator/blob/master/imgs/sample-results.png)
 
 
 ```The location with most foot traffic from all the simulations for pedestrian traffic is located at the node located at business, (8, 12) with 13 collisions (saved as city-with-marked_locations.png).```
